@@ -1,22 +1,14 @@
 {
   "name": "Aela — Built for the long game",
   "short_name": "Aela",
-  "description": "Your hybrid athlete wellness tracker — nutrition, movement, recovery, and the science behind all of it.",
+  "description": "Your hybrid athlete wellness tracker.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F2F4F6",
+  "background_color": "#1C2128",
   "theme_color": "#1C2128",
-  "categories": ["health", "fitness", "lifestyle"],
+  "categories": ["health", "fitness"],
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" },
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-  ],
-  "screenshots": [],
-  "shortcuts": [
-    { "name": "Today", "url": "/?tab=today", "description": "View your daily dashboard" },
-    { "name": "Log Food", "url": "/?tab=nutrition", "description": "Log what you ate" },
-    { "name": "Log Workout", "url": "/?tab=wellness", "description": "Track your training" }
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
