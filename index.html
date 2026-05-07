@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1C2128" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F2F4F6" media="(prefers-color-scheme: light)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Aela">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="Aela — your hybrid athlete wellness tracker. Nutrition, movement, recovery, and the science behind all of it.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Aela">
+  <meta property="og:description" content="Built for the long game. Your hybrid athlete wellness tracker.">
+  <meta property="og:type" content="website">
+
+  <title>Aela</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Jost:wght@300;400;500;600&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%; width: 100%;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      font-family: 'Jost', sans-serif;
+    }
+    body {
+      background: #F2F4F6;
+      /* Safe area insets for iPhone notch / dynamic island */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+    #root { min-height: 100vh; }
+
+    /* Splash screen */
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #1C2128;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px;
+      transition: opacity 0.5s ease;
+    }
+    #splash.hidden { opacity: 0; pointer-events: none; }
+    #splash svg { animation: pulse 2s ease-in-out infinite; }
+    #splash .wordmark {
+      font-family: 'Syncopate', sans-serif;
+      font-size: 28px; font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #E8ECF0;
+    }
+    #splash .tagline {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: #B06A3A;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.7; transform: scale(0.96); }
+    }
+
+    /* Loading bar */
+    #loadbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 2px; background: #B06A3A;
+      z-index: 10000;
+      transform-origin: left;
+      animation: loadprogress 1.8s ease-out forwards;
+    }
+    @keyframes loadprogress {
+      0%   { transform: scaleX(0); }
+      60%  { transform: scaleX(0.7); }
+      100% { transform: scaleX(1); opacity: 0; }
+    }
+
+    /* PWA install banner */
+    #install-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #1C2128; color: #E8ECF0;
+      padding: 16px 20px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      display: none; flex-direction: column; gap: 10px;
+      z-index: 500; border-top: 1px solid #2A3140;
+      font-family: 'Jost', sans-serif;
+      animation: slideUp 0.3s ease;
+    }
+    #install-banner.show { display: flex; }
+    #install-banner .banner-title { font-size: 13px; font-weight: 500; }
+    #install-banner .banner-sub { font-size: 11px; color: #5A6478; line-height: 1.5; }
+    #install-banner .banner-btns { display: flex; gap: 8px; }
+    #install-banner .btn-install {
+      flex: 1; padding: 10px; border: none; border-radius: 10px;
+      background: #B06A3A; color: white;
+      font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+      cursor: pointer; letter-spacing: 0.06em;
+    }
+    #install-banner .btn-dismiss {
+      padding: 10px 16px; border: 1px solid #2A3140; border-radius: 10px;
+      background: transparent; color: #5A6478;
+      font-family: 'Jost', sans-serif; font-size: 12px; cursor: pointer;
+    }
+
+    /* iOS install instructions */
+    #ios-install {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #1C2128; color: #E8ECF0;
+      padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      z-index: 500; border-top: 1px solid #2A3140;
+      font-family: 'Jost', sans-serif;
+      display: none; flex-direction: column; gap: 12px;
+      animation: slideUp 0.3s ease;
+    }
+    #ios-install.show { display: flex; }
+    #ios-install .step { display: flex; gap: 10px; align-items: center; font-size: 12px; color: #8A96A0; }
+    #ios-install .step strong { color: #E8ECF0; }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Splash screen -->
+  <div id="splash">
+    <div id="loadbar"></div>
+    <svg width="64" height="72" viewBox="0 0 80 90" fill="none">
+      <path d="M40 4 L6 86" stroke="#E8ECF0" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M40 4 L74 86" stroke="#E8ECF0" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M22 52 Q40 38 58 52" stroke="#B06A3A" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <circle cx="22" cy="52" r="2.5" fill="#B06A3A"/>
+      <circle cx="58" cy="52" r="2.5" fill="#B06A3A"/>
+    </svg>
+    <div class="wordmark">AELA</div>
+    <div class="tagline">Built for the long game</div>
+  </div>
+
+  <!-- App root -->
+  <div id="root"></div>
+
+  <!-- PWA Install banner (Chrome/Android) -->
+  <div id="install-banner">
+    <div>
+      <div class="banner-title">Add Aela to your Home Screen</div>
+      <div class="banner-sub">Install for the full app experience — works offline too.</div>
+    </div>
+    <div class="banner-btns">
+      <button class="btn-install" id="btn-install">Install App</button>
+      <button class="btn-dismiss" id="btn-dismiss">Not now</button>
+    </div>
+  </div>
+
+  <!-- iOS install instructions -->
+  <div id="ios-install">
+    <div style="font-size:13px; font-weight:500; margin-bottom:4px;">Add Aela to your Home Screen</div>
+    <div class="step"><span>1.</span><span>Tap <strong>Share</strong> in Safari's toolbar below</span></div>
+    <div class="step"><span>2.</span><span>Scroll down and tap <strong>Add to Home Screen</strong></span></div>
+    <div class="step"><span>3.</span><span>Tap <strong>Add</strong> — Aela will appear on your home screen</span></div>
+    <button onclick="document.getElementById('ios-install').classList.remove('show')"
+      style="padding:10px; border:1px solid #2A3140; border-radius:10px; background:transparent; color:#5A6478; font-family:'Jost',sans-serif; font-size:12px; cursor:pointer; margin-top:4px;">
+      Got it
+    </button>
+  </div>
+
+  <!-- React + Babel from CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- PWA + install logic -->
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+
+    // PWA install prompt (Chrome / Android)
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Show banner after 3 seconds if not already installed
+      const alreadyDismissed = localStorage.getItem('aela_install_dismissed');
+      if (!alreadyDismissed) {
+        setTimeout(() => {
+          document.getElementById('install-banner').classList.add('show');
+        }, 3000);
+      }
+    });
+
+    document.getElementById('btn-install')?.addEventListener('click', async () => {
+      document.getElementById('install-banner').classList.remove('show');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      }
+    });
+
+    document.getElementById('btn-dismiss')?.addEventListener('click', () => {
+      document.getElementById('install-banner').classList.remove('show');
+      localStorage.setItem('aela_install_dismissed', '1');
+    });
+
+    // iOS detection — show share instructions
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isIOS && !isInStandaloneMode) {
+      const alreadyDismissed = localStorage.getItem('aela_ios_dismissed');
+      if (!alreadyDismissed) {
+        setTimeout(() => {
+          document.getElementById('ios-install').classList.add('show');
+          localStorage.setItem('aela_ios_dismissed', '1');
+        }, 4000);
+      }
+    }
+
+    // Expose React hooks globally so app.jsx can use them without import
+    const { useState, useEffect, useCallback, useRef, useMemo } = React;
+  </script>
+
+  <!-- Load and render the app -->
+  <script type="text/babel" src="app.jsx" data-type="module"></script>
+  <script type="text/babel">
+    // Mount the app
+    const rootEl = document.getElementById('root');
+    const reactRoot = ReactDOM.createRoot(rootEl);
+    reactRoot.render(React.createElement(WellnessTracker));
+
+    // Hide splash screen once app is mounted
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      if (splash) splash.classList.add('hidden');
+      setTimeout(() => { if (splash) splash.remove(); }, 600);
+    }, 1200);
+  </script>
+
+</body>
+</html>
